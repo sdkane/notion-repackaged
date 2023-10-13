@@ -30,7 +30,7 @@ pushd "${NOTION_REPACKAGED_EDITION_SRCDIR}" > /dev/null
 
 patchfile="${WORKSPACE_DIR}/patches/remove-postinstall.patch"
 dos2unix "$patchfile"
-patch -p0 --binary < "$patchfile"
+patch -p0 --binary -N -r- < "$patchfile" ||:
 
 log "Installing dependencies..."
 npm install

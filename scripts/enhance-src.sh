@@ -78,6 +78,9 @@ convert "${NOTION_ENHANCER_ICONS}/colour-x512.png" -resize 256x256 \
   -define icon:auto-resize="256,128,96,64,48,32,16" \
   icon.ico
 
+# todo: use real icon
+cp -f "${NOTION_ENHANCER_ICONS}/colour-x512.png" "../${NOTION_VANILLA_SRC_NAME}/icon.png"
+
 # todo: what is this for?
 #log "Converting icon to multi-size for Mac and Linux"
 ## https://askubuntu.com/questions/223215/how-can-i-convert-a-png-file-to-icns

@@ -25,15 +25,15 @@ log "Building vanilla edition..."
 
 export NOTION_REPACKAGED_EDITION=vanilla
 
-${WORKSPACE_DIR}/scripts/build-locally.sh --linux dir &
+${WORKSPACE_DIR}/scripts/build-locally.sh
 
-if [ "${NOTION_REPACKAGED_AIO_SKIP_ENHANCED}" != true ]; then
-  log "Building enhanced edition..."
-
-  export NOTION_REPACKAGED_EDITION=enhanced 
-  
-  ${WORKSPACE_DIR}/scripts/build-locally.sh --linux dir
-fi
+#if [ "${NOTION_REPACKAGED_AIO_SKIP_ENHANCED}" != true ]; then
+#  log "Building enhanced edition..."
+#
+#  export NOTION_REPACKAGED_EDITION=enhanced
+#
+#  ${WORKSPACE_DIR}/scripts/build-locally.sh --linux dir
+#fi
 
 fg > /dev/null 2>&1 || true
 log "All build steps have successfully finished."

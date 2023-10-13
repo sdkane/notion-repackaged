@@ -59,7 +59,7 @@ sed -i 's|error.message.indexOf("/opt/notion-app/app.asar") !== -1|process.platf
 # fix for issue #46 of notion-repackaged
 patchfile="${WORKSPACE_DIR}/patches/no-sandbox-flag.patch"
 dos2unix "$patchfile"
-patch -p0 --binary < "$patchfile"
+patch -p0 --binary -N -r- < "$patchfile" ||:
 
 find . -type f -name "*.js.map" -exec rm {} +
 

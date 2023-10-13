@@ -4,9 +4,7 @@
  Object.defineProperty(exports, "__esModule", { value: true });
  require("../helpers/setEnvironment");
  const electron_1 = require("electron");
-+electron_1.app.commandLine.appendSwitch("--no-sandbox");
-+electron_1.app.commandLine.appendSwitch("--enable-features=UseOzonePlatform");
-+electron_1.app.commandLine.appendSwitch("--ozone-platform=wayland");
++electron_1.app.commandLine.appendSwitch("no-sandbox");
  require("./crashReporter");
  const security_1 = require("./security");
  const autoUpdater_1 = require("./autoUpdater");

@@ -25,7 +25,7 @@ const fpmOptions = [
   `--conflicts=${conflictProductId}`,
 ];
 
-const combineTargetAndArch = (targets, architectures = ['x64', 'arm64']) =>
+const combineTargetAndArch = (targets, architectures = ['x64']) =>
   targets.map((target) => ({ target, arch: architectures }));
 
 // realistically Auto Update only works for Windows
