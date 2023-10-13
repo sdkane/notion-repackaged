@@ -1,10 +1,12 @@
---- main/main.js	2021-12-15 19:09:58.501121407 +0100
-+++ main/main.js	2021-12-15 19:14:20.397000000 +0100
-@@ -23,6 +23,7 @@
- };
+--- main/main.js	2023-10-11 20:00:21.722768074 -0400
++++ main/main.js	2023-10-11 20:00:21.712768179 -0400
+@@ -5,6 +5,9 @@
  Object.defineProperty(exports, "__esModule", { value: true });
+ require("../helpers/setEnvironment");
  const electron_1 = require("electron");
 +electron_1.app.commandLine.appendSwitch("--no-sandbox");
- require("isomorphic-fetch");
++electron_1.app.commandLine.appendSwitch("--enable-features=UseOzonePlatform");
++electron_1.app.commandLine.appendSwitch("--ozone-platform=wayland");
  require("./crashReporter");
+ const security_1 = require("./security");
  const autoUpdater_1 = require("./autoUpdater");

@@ -4,7 +4,7 @@ set -e
 source `dirname $0`/_utils.sh
 workdir ${WORKSPACE_BUILD_DIR}
 
-check-cmd jq git convert png2icns node sponge
+check-cmd jq git convert node sponge
 check-env NOTION_ENHANCER_DESKTOP_COMMIT
 
 if [ -d "${NOTION_ENHANCED_SRC_NAME}" ]; then
@@ -68,7 +68,7 @@ jq '.dependencies += {"notion-enhancer": "file:shared/notion-enhancer"}' package
 log "Swapping out icons..."
 rm -vf icon.icns icon.png icon.ico 
 
-NOTION_ENHANCER_ICONS="shared/notion-enhancer/media"
+NOTION_ENHANCER_ICONS="shared/notion-enhancer/assets"
 
 cp "${NOTION_ENHANCER_ICONS}/colour-x512.png" icon.png
 
@@ -78,13 +78,14 @@ convert "${NOTION_ENHANCER_ICONS}/colour-x512.png" -resize 256x256 \
   -define icon:auto-resize="256,128,96,64,48,32,16" \
   icon.ico
 
-log "Converting icon to multi-size for Mac and Linux"
-# https://askubuntu.com/questions/223215/how-can-i-convert-a-png-file-to-icns
-png2icns icon.icns \
-  "${NOTION_ENHANCER_ICONS}/colour-x512.png" \
-  "${NOTION_ENHANCER_ICONS}/colour-x256.png" \
-  "${NOTION_ENHANCER_ICONS}/colour-x128.png" \
-  "${NOTION_ENHANCER_ICONS}/colour-x32.png" \
-  "${NOTION_ENHANCER_ICONS}/colour-x16.png"
+# todo: what is this for?
+#log "Converting icon to multi-size for Mac and Linux"
+## https://askubuntu.com/questions/223215/how-can-i-convert-a-png-file-to-icns
+#png2icns icon.icns \
+#  "${NOTION_ENHANCER_ICONS}/colour-x512.png" \
+#  "${NOTION_ENHANCER_ICONS}/colour-x256.png" \
+#  "${NOTION_ENHANCER_ICONS}/colour-x128.png" \
+#  "${NOTION_ENHANCER_ICONS}/colour-x32.png" \
+#  "${NOTION_ENHANCER_ICONS}/colour-x16.png"
 
 popd > /dev/null

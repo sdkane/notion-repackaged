@@ -4,7 +4,7 @@ set -e
 source `dirname $0`/_utils.sh
 workdir ${WORKSPACE_BUILD_DIR}
 
-check-cmd 7z jq convert sponge
+check-cmd 7z jq convert sponge dos2unix
 check-env NOTION_VERSION NOTION_REPACKAGED_REVISION
 
 if [ -d "${NOTION_EXTRACTED_EXE_NAME}" ]; then
@@ -32,6 +32,9 @@ if [ -d "${NOTION_VANILLA_SRC_NAME}" ]; then
   rm -r "${NOTION_VANILLA_SRC_NAME}"
 fi
 
+log "Extracting asar..."
+asar extract "${NOTION_EXTRACTED_APP_NAME}/resources/app.asar" "${NOTION_EXTRACTED_APP_NAME}/resources/app"
+
 log "Copying original app resources..."
 mkdir -p "${NOTION_VANILLA_SRC_NAME}"
 cp -r "${NOTION_EXTRACTED_APP_NAME}/resources/app/"* "${NOTION_VANILLA_SRC_NAME}"
@@ -54,7 +57,9 @@ sed -i 's|sqliteServerEnabled: true|sqliteServerEnabled: false|g' renderer/prelo
 sed -i 's|error.message.indexOf("/opt/notion-app/app.asar") !== -1|process.platform === "linux"|g' main/autoUpdater.js
 
 # fix for issue #46 of notion-repackaged
-patch -p0 --binary < "${WORKSPACE_DIR}/patches/no-sandbox-flag.patch"
+patchfile="${WORKSPACE_DIR}/patches/no-sandbox-flag.patch"
+dos2unix "$patchfile"
+patch -p0 --binary < "$patchfile"
 
 find . -type f -name "*.js.map" -exec rm {} +
 
