@@ -63,8 +63,8 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-      - name: Install moreutils and dos2unix
-        run: sudo apt-get install -y moreutils dos2unix
+      - name: Install moreutils
+        run: sudo apt-get install -y moreutils
       - name: Install asar
         run: npm install -g asar
       - name: Download official Windows build
@@ -88,8 +88,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install icnsutils, moreutils, and dos2unix
-        run: sudo apt-get install -y icnsutils moreutils dos2unix
+      - name: Install icnsutils, moreutils
+        run: sudo apt-get install -y icnsutils moreutils
       - name: Force to use HTTPS instead of SSH
         run: git config --global url."https://github.com/".insteadOf "git@github.com:"
       - name: Retrieve saved vanilla sources
@@ -151,9 +151,6 @@ jobs:
       - name: Install Linux build dependencies
         if: matrix.os == 'ubuntu-latest'
         run: sudo apt-get install --no-install-recommends -y libopenjp2-tools rpm libarchive-tools
-      - name: Remove postinstall
-        working-directory: ${{ matrix.edition }}-src
-        run: patch -p0 --binary -N -r- < ../patches/remove-postinstall.patch
       - name: Install dependencies
         working-directory: ${{ matrix.edition }}-src
         run: npm install

@@ -4,7 +4,7 @@ set -e
 source `dirname $0`/_utils.sh
 workdir ${WORKSPACE_BUILD_DIR}
 
-check-cmd jq git dos2unix
+check-cmd jq git
 check-env NOTION_VERSION NOTION_REPACKAGED_REVISION
 
 if [ -z "${NOTION_REPACKAGED_EDITION}" ]; then
@@ -27,10 +27,6 @@ if [ ! -d "${NOTION_REPACKAGED_EDITION_SRCDIR}" ]; then
 fi
 
 pushd "${NOTION_REPACKAGED_EDITION_SRCDIR}" > /dev/null
-
-patchfile="${WORKSPACE_DIR}/patches/remove-postinstall.patch"
-dos2unix "$patchfile"
-patch -p0 --binary -N -r- < "$patchfile" ||:
 
 log "Installing dependencies..."
 npm install
