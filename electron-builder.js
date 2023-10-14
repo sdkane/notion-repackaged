@@ -25,7 +25,7 @@ const fpmOptions = [
   `--conflicts=${conflictProductId}`,
 ];
 
-const combineTargetAndArch = (targets, architectures = ['x64']) =>
+const combineTargetAndArch = (targets, architectures = ['x64', 'arm64']) =>
   targets.map((target) => ({ target, arch: architectures }));
 
 // realistically Auto Update only works for Windows
@@ -64,7 +64,7 @@ module.exports = {
       StartupNotify: 'true',
       StartupWMClass: productId,
     },
-    target: combineTargetAndArch(['pacman', 'zip']),
+    target: combineTargetAndArch(['AppImage', 'deb', 'rpm', 'pacman', 'zip']),
     publish: getPublishProviders('linux'),
   },
   nsis: {
@@ -72,5 +72,21 @@ module.exports = {
     oneClick: false,
     perMachine: false,
   },
+  deb: {
+    fpm: fpmOptions,
+    depends: [
+      'libgtk-3-0',
+      'libnotify4',
+      'libnss3',
+      'libxss1',
+      'libxtst6',
+      'xdg-utils',
+      'libatspi2.0-0',
+      'libuuid1',
+      'libsecret-1-0',
+      /* 'libappindicator3-1', */
+    ],
+  },
   pacman: { fpm: fpmOptions },
+  rpm: { fpm: fpmOptions },
 };

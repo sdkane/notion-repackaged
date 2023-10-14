@@ -61,7 +61,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install moreutils
-        run: sudo apt-get install -y moreutils
+        run: sudo apt-get install -y moreutils dos2unix
       - name: Download official Windows build
         env:
           NOTION_DOWNLOAD_HASH: ${{ needs.preload-variables.outputs.notion_download_hash }}
@@ -84,7 +84,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install icnsutils and moreutils
-        run: sudo apt-get install -y icnsutils moreutils
+        run: sudo apt-get install -y icnsutils moreutils dos2unix
       - name: Force to use HTTPS instead of SSH
         run: git config --global url."https://github.com/".insteadOf "git@github.com:"
       - name: Retrieve saved vanilla sources
@@ -135,7 +135,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
-          node-version: 14
+          node-version: 16
       - name: Retrieve saved sources
         uses: actions/download-artifact@v2
         with:
@@ -154,7 +154,7 @@ jobs:
         run: npx patch-package
       - name: Install electron and electron-builder
         working-directory: ${{ matrix.edition }}-src
-        run: npm install electron@11 electron-builder --save-dev
+        run: npm install electron@25 electron-builder --save-dev
       - name: Run electron-builder
         working-directory: ${{ matrix.edition }}-src
         env:
