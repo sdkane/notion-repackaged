@@ -18,19 +18,19 @@ jobs:
     name: Preload variables
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - id: preload-variables
         name: Load variables and set them as outputs
         run: |
           source notion-repackaged.sh
 
-          echo "::set-output name=notion_version::$NOTION_VERSION"
-          echo "::set-output name=notion_repackaged_revision::$NOTION_REPACKAGED_REVISION"
-          echo "::set-output name=notion_download_hash::$NOTION_DOWNLOAD_HASH"
-          echo "::set-output name=notion_enhancer_desktop_commit::$NOTION_ENHANCER_DESKTOP_COMMIT"
+          echo "{notion_version}={$NOTION_VERSION}" >> $GITHUB_OUTPUT
+          echo "{notion_repackaged_revision}={$NOTION_REPACKAGED_REVISION}" >> $GITHUB_OUTPUT
+          echo "{notion_download_hash}={$NOTION_DOWNLOAD_HASH}" >> $GITHUB_OUTPUT
+          echo "{notion_enhancer_desktop_commit}={$NOTION_ENHANCER_DESKTOP_COMMIT}" >> $GITHUB_OUTPUT
 
           NOTION_REPACKAGED_VERSION_REV="${NOTION_VERSION}-${NOTION_REPACKAGED_REVISION}"
-          echo "::set-output name=notion_repackaged_version_rev::$NOTION_REPACKAGED_VERSION_REV"
+          echo "{notion_repackaged_version_rev}={$NOTION_REPACKAGED_VERSION_REV}" >> $GITHUB_OUTPUT
     outputs:
       notion_version: ${{ steps.preload-variables.outputs.notion_version }}
       notion_repackaged_revision: ${{ steps.preload-variables.outputs.notion_repackaged_revision }}
@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [preload-variables]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: release-drafter/release-drafter@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -59,9 +59,14 @@ jobs:
       NOTION_VERSION: ${{ needs.preload-variables.outputs.notion_version }}
       NOTION_REPACKAGED_REVISION: ${{ needs.preload-variables.outputs.notion_repackaged_revision }}
     steps:
-      - uses: actions/checkout@v2
-      - name: Install moreutils
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 16
+      - name: Install moreutils and dos2unix
         run: sudo apt-get install -y moreutils dos2unix
+      - name: Install asar
+        run: npm install -g asar
       - name: Download official Windows build
         env:
           NOTION_DOWNLOAD_HASH: ${{ needs.preload-variables.outputs.notion_download_hash }}
@@ -82,8 +87,8 @@ jobs:
     needs: [make-vanilla-sources, preload-variables]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Install icnsutils and moreutils
+      - uses: actions/checkout@v4
+      - name: Install icnsutils, moreutils, and dos2unix
         run: sudo apt-get install -y icnsutils moreutils dos2unix
       - name: Force to use HTTPS instead of SSH
         run: git config --global url."https://github.com/".insteadOf "git@github.com:"
@@ -132,7 +137,7 @@ jobs:
           - target: macos
             edition: vanilla
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v1
         with:
           node-version: 16
@@ -174,6 +179,6 @@ jobs:
         edition: [vanilla, enhanced]
     runs-on: ubuntu-latest
     steps:
-      - uses: geekyeggo/delete-artifact@v1
+      - uses: geekyeggo/delete-artifact@v2
         with:
           name: '${{ matrix.edition }}-sources'
