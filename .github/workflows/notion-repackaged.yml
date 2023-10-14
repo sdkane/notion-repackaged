@@ -150,13 +150,10 @@ jobs:
         run: 7z x sources.zip
       - name: Install Linux build dependencies
         if: matrix.os == 'ubuntu-latest'
-        run: sudo apt-get install --no-install-recommends -y libopenjp2-tools rpm libarchive-tools dos2unix
+        run: sudo apt-get install --no-install-recommends -y libopenjp2-tools rpm libarchive-tools
       - name: Remove postinstall
         working-directory: ${{ matrix.edition }}-src
-        run: |
-          patchfile="../patches/remove-postinstall.patch"
-          dos2unix "$patchfile"
-          patch -p0 --binary -N -r- < "$patchfile"
+        run: patch -p0 --binary -N -r- < ../patches/remove-postinstall.patch
       - name: Install dependencies
         working-directory: ${{ matrix.edition }}-src
         run: npm install
