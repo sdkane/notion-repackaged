@@ -67,12 +67,12 @@ jobs:
         run: sudo apt-get install -y moreutils dos2unix
       - name: Install asar
         run: npm install -g asar
-      - name: Load variables
-        run: source notion-repackaged.sh
       - name: Download official Windows build
         env:
           NOTION_DOWNLOAD_HASH: ${{ needs.preload-variables.outputs.notion_download_hash }}
-        run: scripts/download-exe.sh
+        run: |
+          source notion-repackaged.sh
+          scripts/download-exe.sh
       - name: Extract sources from Windows Build
         run: scripts/extract-src.sh
       - name: Zip sources dir with 7z
