@@ -77,7 +77,7 @@ jobs:
         working-directory: build
         run: 7z a vanilla-src.zip vanilla-src
       - name: Save vanilla sources as artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: vanilla-sources
           path: build/vanilla-src.zip
@@ -93,7 +93,7 @@ jobs:
       - name: Force to use HTTPS instead of SSH
         run: git config --global url."https://github.com/".insteadOf "git@github.com:"
       - name: Retrieve saved vanilla sources
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: vanilla-sources
           path: build/vanilla-src.zip
@@ -108,7 +108,7 @@ jobs:
         working-directory: build
         run: 7z a enhanced-src.zip enhanced-src
       - name: Save enhanced sources as artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: enhanced-sources
           path: build/enhanced-src.zip
@@ -142,7 +142,7 @@ jobs:
         with:
           node-version: 16
       - name: Retrieve saved sources
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: ${{ matrix.edition }}-sources
           path: sources.zip
@@ -150,7 +150,13 @@ jobs:
         run: 7z x sources.zip
       - name: Install Linux build dependencies
         if: matrix.os == 'ubuntu-latest'
-        run: sudo apt-get install --no-install-recommends -y libopenjp2-tools rpm libarchive-tools
+        run: sudo apt-get install --no-install-recommends -y libopenjp2-tools rpm libarchive-tools dos2unix
+      - name: Remove postinstall
+        working-directory: ${{ matrix.edition }}-src
+        run: |
+          patchfile="../patches/remove-postinstall.patch"
+          dos2unix "$patchfile"
+          patch -p0 --binary -N -r- < "$patchfile"
       - name: Install dependencies
         working-directory: ${{ matrix.edition }}-src
         run: npm install
