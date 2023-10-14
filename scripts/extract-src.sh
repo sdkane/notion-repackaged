@@ -57,10 +57,10 @@ sed -i 's|sqliteServerEnabled: true|sqliteServerEnabled: false|g' renderer/prelo
 sed -i 's|error.message.indexOf("/opt/notion-app/app.asar") !== -1|process.platform === "linux"|g' main/autoUpdater.js
 
 # fix for issue #46 of notion-repackaged
-patch -p0 --binary -N -r- < "$patchfile" ||:
+patch -p0 --binary -N -r- < "${WORKSPACE_DIR}/patches/no-sandbox-flag.patch"
 
 # postinstall doesn't actually exist
-patch -p0 --binary -N -r- < "$patchfile" ||:
+patch -p0 --binary -N -r- < "${WORKSPACE_DIR}/patches/remove-postinstall.patch"
 
 find . -type f -name "*.js.map" -exec rm {} +
 
