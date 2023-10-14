@@ -67,6 +67,8 @@ jobs:
         run: sudo apt-get install -y moreutils dos2unix
       - name: Install asar
         run: npm install -g asar
+      - name: Load variables
+        run: source notion-repackaged.sh
       - name: Download official Windows build
         env:
           NOTION_DOWNLOAD_HASH: ${{ needs.preload-variables.outputs.notion_download_hash }}
