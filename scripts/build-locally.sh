@@ -29,6 +29,7 @@ fi
 pushd "${NOTION_REPACKAGED_EDITION_SRCDIR}" > /dev/null
 
 log "Installing dependencies..."
+export SKIP_POSTINSTALL=true
 npm install
 
 log "Running patch-package"

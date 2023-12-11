@@ -36,8 +36,9 @@ log "Extracting asar..."
 asar extract "${NOTION_EXTRACTED_APP_NAME}/resources/app.asar" "${NOTION_EXTRACTED_APP_NAME}/resources/app"
 
 log "Copying original app resources..."
-mkdir -p "${NOTION_VANILLA_SRC_NAME}"
-cp -r "${NOTION_EXTRACTED_APP_NAME}/resources/app/"* "${NOTION_VANILLA_SRC_NAME}"
+cp -r  "${NOTION_EXTRACTED_APP_NAME}/resources/app/" "${NOTION_VANILLA_SRC_NAME}"
+rm "${NOTION_VANILLA_SRC_NAME}"/icon*
+cp $WORKSPACE_DIR/logo.png "${NOTION_VANILLA_SRC_NAME}"/icon.png
 
 export NOTION_REPACKAGED_VERSION_REV="${NOTION_VERSION}-${NOTION_REPACKAGED_REVISION}"
 
@@ -46,21 +47,6 @@ pushd "${NOTION_VANILLA_SRC_NAME}" > /dev/null
 log "Patching and cleaning source"
 
 rm -r node_modules
-
-# behave like windows for OS other than Mac (Windows and Linux)
-sed -i 's|process.platform === "win32"|process.platform !== "darwin"|g' main/main.js
-
-# fix for issues #37, #65 of notion-repackaged (temporary fix)
-sed -i 's|sqliteServerEnabled: true|sqliteServerEnabled: false|g' renderer/preload.js
-
-# fix for issue #63 of notion-repackaged
-sed -i 's|error.message.indexOf("/opt/notion-app/app.asar") !== -1|process.platform === "linux"|g' main/autoUpdater.js
-
-# fix for issue #46 of notion-repackaged
-patch -p0 --binary -N -r- < "${WORKSPACE_DIR}/patches/no-sandbox-flag.patch"
-
-# postinstall doesn't actually exist
-patch -p0 --binary -N -r- < "${WORKSPACE_DIR}/patches/remove-postinstall.patch"
 
 find . -type f -name "*.js.map" -exec rm {} +
 
@@ -71,16 +57,11 @@ jq \
   --arg repo "${NOTION_REPACKAGED_REPO}" \
   --arg author "${NOTION_REPACKAGED_AUTHOR}" \
   --arg version "${NOTION_REPACKAGED_VERSION_REV}" \
-  '.dependencies.cld="2.7.0" | 
-  .name="notion-app" | 
+  '.name="notion-app" |
   .homepage=$homepage | 
   .repository=$repo | 
   .author=$author | 
   .version=$version' \
   package.json | sponge package.json
-
-log "Converting app icon to png..."
-
-convert "icon.ico[0]" "icon.png"
 
 popd > /dev/null
