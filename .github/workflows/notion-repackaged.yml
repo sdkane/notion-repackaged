@@ -27,7 +27,6 @@ jobs:
           echo "notion_version=$NOTION_VERSION" >> $GITHUB_OUTPUT
           echo "notion_repackaged_revision=$NOTION_REPACKAGED_REVISION" >> $GITHUB_OUTPUT
           echo "notion_download_hash=$NOTION_DOWNLOAD_HASH" >> $GITHUB_OUTPUT
-          echo "notion_enhancer_desktop_commit=$NOTION_ENHANCER_DESKTOP_COMMIT" >> $GITHUB_OUTPUT
 
           NOTION_REPACKAGED_VERSION_REV="${NOTION_VERSION}-${NOTION_REPACKAGED_REVISION}"
           echo "notion_repackaged_version_rev=$NOTION_REPACKAGED_VERSION_REV" >> $GITHUB_OUTPUT
@@ -36,7 +35,6 @@ jobs:
       notion_repackaged_revision: ${{ steps.preload-variables.outputs.notion_repackaged_revision }}
       notion_repackaged_version_rev: ${{ steps.preload-variables.outputs.notion_repackaged_version_rev }}
       notion_download_hash: ${{ steps.preload-variables.outputs.notion_download_hash }}
-      notion_enhancer_desktop_commit: ${{ steps.preload-variables.outputs.notion_enhancer_desktop_commit }}
 
   create-release:
     name: Create release
@@ -62,7 +60,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 20
       - name: Install moreutils
         run: sudo apt-get install -y moreutils
       - name: Install asar
@@ -81,104 +79,55 @@ jobs:
         with:
           name: vanilla-sources
           path: build/vanilla-src.zip
-
-  make-enhanced-sources:
-    name: Make enhanced sources
-    needs: [make-vanilla-sources, preload-variables]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install icnsutils, moreutils
-        run: sudo apt-get install -y icnsutils moreutils
-      - name: Force to use HTTPS instead of SSH
-        run: git config --global url."https://github.com/".insteadOf "git@github.com:"
-      - name: Retrieve saved vanilla sources
-        uses: actions/download-artifact@v3
-        with:
-          name: vanilla-sources
-          path: build/vanilla-src.zip
-      - name: Unzip sources with 7z
-        working-directory: build
-        run: 7z x vanilla-src.zip
-      - name: Enhance extracted sources
-        env:
-          NOTION_ENHANCER_DESKTOP_COMMIT: ${{ needs.preload-variables.outputs.notion_enhancer_desktop_commit }}
-        run: scripts/enhance-src.sh
-      - name: Zip sources dir with 7z
-        working-directory: build
-        run: 7z a enhanced-src.zip enhanced-src
-      - name: Save enhanced sources as artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: enhanced-sources
-          path: build/enhanced-src.zip
-
+          
   build-app:
     name: Build app
-    needs: [make-vanilla-sources, make-enhanced-sources, preload-variables, create-release]
-    runs-on: ${{ matrix.os }}
+    needs: [make-vanilla-sources, preload-variables, create-release] 
+    runs-on: ubuntu-latest
     env:
       NOTION_VERSION: ${{ needs.preload-variables.outputs.notion_version }}
       NOTION_REPACKAGED_REVISION: ${{ needs.preload-variables.outputs.notion_repackaged_revision }}
-    strategy:
-      matrix:
-        target: [windows, linux, macos]
-        edition: [vanilla, enhanced]
-        include:
-          - target: windows
-            os: windows-latest
-          - target: linux
-            os: ubuntu-latest
-          - target: macos
-            os: macos-latest
-        exclude:
-          - target: windows
-            edition: vanilla
-          - target: macos
-            edition: vanilla
+      SKIP_POSTINSTALL: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 20
       - name: Retrieve saved sources
         uses: actions/download-artifact@v3
         with:
-          name: ${{ matrix.edition }}-sources
+          name: vanilla-sources
           path: sources.zip
       - name: Unzip sources with 7z
         run: 7z x sources.zip
       - name: Install Linux build dependencies
-        if: matrix.os == 'ubuntu-latest'
         run: sudo apt-get install --no-install-recommends -y libopenjp2-tools rpm libarchive-tools
       - name: Install dependencies
-        working-directory: ${{ matrix.edition }}-src
+        working-directory: vanilla-src
         run: npm install
       - name: Run patch-package
-        working-directory: ${{ matrix.edition }}-src
+        working-directory: vanilla-src
         run: npx patch-package
       - name: Install electron and electron-builder
-        working-directory: ${{ matrix.edition }}-src
-        run: npm install electron@25 electron-builder --save-dev
+        working-directory: vanilla-src
+        run: npm install electron@31 electron-builder --save-dev
       - name: Run electron-builder
-        working-directory: ${{ matrix.edition }}-src
+        working-directory: vanilla-src
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NOTION_REPACKAGED_EDITION: ${{ matrix.edition }}
-        run: npx electron-builder --${{ matrix.target }} -c ../electron-builder.js
+          NOTION_REPACKAGED_EDITION: vanilla
+        run: npx electron-builder --linux -c ../electron-builder.js
       - name: Print packages md5 checksums
-        working-directory: ${{ matrix.edition }}-src
+        working-directory: vanilla-src
         run: find ./dist/ -maxdepth 1 -type f -exec openssl md5 {} +
         shell: bash
+
   cleanup:
     name: Cleanup artifacts
     if: always()
     needs: [build-app]
-    strategy:
-      matrix:
-        edition: [vanilla, enhanced]
     runs-on: ubuntu-latest
     steps:
       - uses: geekyeggo/delete-artifact@v2
         with:
-          name: '${{ matrix.edition }}-sources'
+          name: 'vanilla-sources'
