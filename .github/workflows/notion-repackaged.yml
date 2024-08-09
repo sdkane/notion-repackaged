@@ -123,7 +123,7 @@ jobs:
     strategy:
       matrix:
         target: [windows, linux, macos]
-        edition: [vanilla, enhanced]
+        edition: [vanilla] #, enhanced
         include:
           - target: windows
             os: windows-latest
@@ -176,7 +176,7 @@ jobs:
     needs: [build-app]
     strategy:
       matrix:
-        edition: [vanilla, enhanced]
+        edition: [vanilla] #, enhanced
     runs-on: ubuntu-latest
     steps:
       - uses: geekyeggo/delete-artifact@v2
