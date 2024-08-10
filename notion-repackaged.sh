@@ -12,8 +12,5 @@ export NOTION_REPACKAGED_REVISION=1
 # The md5sum hash of the downloaded .exe for the installer
 export NOTION_DOWNLOAD_HASH=7faf8166c81658d1aa8ede4198e1ab3b
 
-# The commit of notion-enhancer/desktop to target
-export NOTION_ENHANCER_DESKTOP_COMMIT=a88c45cc80f0cfd83f205ddfbbca695f50db16ef
-
 # not supported for 3.x.x yet
 export NOTION_REPACKAGED_AIO_SKIP_ENHANCED=true
