@@ -68,7 +68,7 @@ jq '.dependencies += {"notion-enhancer": "file:shared/notion-enhancer"}' package
 log "Swapping out icons..."
 rm -vf icon.icns icon.png icon.ico 
 
-NOTION_ENHANCER_ICONS="shared/notion-enhancer/assets"
+NOTION_ENHANCER_ICONS="shared/notion-enhancer/src/assets"
 
 cp "${NOTION_ENHANCER_ICONS}/colour-x512.png" icon.png
 
