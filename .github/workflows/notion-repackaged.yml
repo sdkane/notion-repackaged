@@ -125,12 +125,12 @@ jobs:
         target: [windows, linux, macos]
         edition: [vanilla, enhanced] 
         include:
-          #- target: windows
-          #  os: windows-latest
+          - target: windows
+            os: windows-latest
           - target: linux
             os: ubuntu-latest
-          #- target: macos
-          #  os: macos-latest
+          - target: macos
+            os: macos-latest
         exclude:
           - target: windows
             edition: vanilla
