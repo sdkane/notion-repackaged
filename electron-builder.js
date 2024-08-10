@@ -12,12 +12,10 @@ const editionEnvVar = ensureEnvVar('NOTION_REPACKAGED_EDITION'),
 
 const isVanilla = editionEnvVar === 'vanilla';
 
-const productName = isVanilla ? 'Notion' : 'Notion Enhanced',
-  productId = isVanilla ? 'notion-app' : 'notion-app-enhanced',
-  conflictProductId = !isVanilla ? 'notion-app' : 'notion-app-enhanced',
-  productDescription = isVanilla
-    ? 'The all-in-one workspace for your notes and tasks'
-    : 'The all-in-one workspace for your notes and tasks, but enhanced';
+const productName = 'Notion',
+  productId = 'notion-app',
+  conflictProductId = 'notion-app-enhanced',
+  productDescription = 'The all-in-one workspace for your notes and tasks';
 
 const fpmOptions = [
   `--version=${versionEnvVar}`,
@@ -44,17 +42,6 @@ module.exports = {
   },
   appId: 'com.github.notion-repackaged',
   protocols: [{ name: 'Notion', schemes: ['notion'] }],
-  win: {
-    icon: 'icon.ico',
-    target: combineTargetAndArch(['nsis', 'zip'], ['x64']),
-    publish: getPublishProviders('win'),
-  },
-  mac: {
-    icon: 'icon.icns',
-    category: 'public.app-category.productivity',
-    target: combineTargetAndArch(['dmg', 'zip']),
-    publish: getPublishProviders('mac'),
-  },
   linux: {
     icon: 'icon.icns',
     category: 'Office;Utility;',
@@ -64,29 +51,7 @@ module.exports = {
       StartupNotify: 'true',
       StartupWMClass: productId,
     },
-    target: combineTargetAndArch(['AppImage', 'deb', 'rpm', 'pacman', 'zip']),
+    target: combineTargetAndArch(['AppImage']),
     publish: getPublishProviders('linux'),
-  },
-  nsis: {
-    installerIcon: 'icon.ico',
-    oneClick: false,
-    perMachine: false,
-  },
-  deb: {
-    fpm: fpmOptions,
-    depends: [
-      'libgtk-3-0',
-      'libnotify4',
-      'libnss3',
-      'libxss1',
-      'libxtst6',
-      'xdg-utils',
-      'libatspi2.0-0',
-      'libuuid1',
-      'libsecret-1-0',
-      /* 'libappindicator3-1', */
-    ],
-  },
-  pacman: { fpm: fpmOptions },
-  rpm: { fpm: fpmOptions },
+  }
 };
