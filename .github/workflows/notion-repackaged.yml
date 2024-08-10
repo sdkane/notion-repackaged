@@ -123,17 +123,19 @@ jobs:
     strategy:
       matrix:
         target: [windows, linux, macos]
-        edition: [vanilla]#, enhanced] 
+        edition: [vanilla enhanced] 
         include:
           - target: linux
             os: ubuntu-latest
         exclude:
+          - target: linux
+            edition: enhanced
           - target: macos
-            os: macos-latest
+            edition: enhanced
+            #os: macos-latest
           - target: windows
-            os: windows-latest
-          - target: windows
-            os: windows-latest         
+            edition: enhanced
+            #os: windows-latest         
           - target: windows
             edition: vanilla
           - target: macos
