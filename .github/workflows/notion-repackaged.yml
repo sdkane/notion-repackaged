@@ -109,7 +109,7 @@ jobs:
         run: npx patch-package
       - name: Install electron and electron-builder
         working-directory: vanilla-src
-        run: npm install electron@25 electron-builder --save-dev
+        run: npm install electron@31 electron-builder --save-dev
       - name: Run electron-builder
         working-directory: vanilla-src
         env:
