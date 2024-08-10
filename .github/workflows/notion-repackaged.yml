@@ -62,7 +62,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 20
       - name: Install moreutils
         run: sudo apt-get install -y moreutils
       - name: Install asar
@@ -123,15 +123,17 @@ jobs:
     strategy:
       matrix:
         target: [windows, linux, macos]
-        edition: [vanilla, enhanced] 
+        edition: [vanilla]#, enhanced] 
         include:
-          - target: windows
-            os: windows-latest
           - target: linux
             os: ubuntu-latest
+        exclude:
           - target: macos
             os: macos-latest
-        exclude:
+          - target: windows
+            os: windows-latest
+          - target: windows
+            os: windows-latest         
           - target: windows
             edition: vanilla
           - target: macos
@@ -140,7 +142,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 20
       - name: Retrieve saved sources
         uses: actions/download-artifact@v3
         with:
