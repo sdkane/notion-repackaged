@@ -82,40 +82,40 @@ jobs:
           name: vanilla-sources
           path: build/vanilla-src.zip
 
-  #make-enhanced-sources:
-  #  name: Make enhanced sources
-  #  needs: [make-vanilla-sources, preload-variables]
-  #  runs-on: ubuntu-latest
-  #  steps:
-  #    - uses: actions/checkout@v4
-  #    - name: Install icnsutils, moreutils
-  #      run: sudo apt-get install -y icnsutils moreutils
-  #    - name: Force to use HTTPS instead of SSH
-  #      run: git config --global url."https://github.com/".insteadOf "git@github.com:"
-  #    - name: Retrieve saved vanilla sources
-  #      uses: actions/download-artifact@v3
-  #      with:
-  #       name: vanilla-sources
-  #        path: build/vanilla-src.zip
-  #    - name: Unzip sources with 7z
-  #      working-directory: build
-  #      run: 7z x vanilla-src.zip
-  #    - name: Enhance extracted sources
-  #      env:
-  #        NOTION_ENHANCER_DESKTOP_COMMIT: ${{ needs.preload-variables.outputs.notion_enhancer_desktop_commit }}
-  #      run: scripts/enhance-src.sh
-  #    - name: Zip sources dir with 7z
-  #      working-directory: build
-  #      run: 7z a enhanced-src.zip enhanced-src
-  #    - name: Save enhanced sources as artifact
-  #      uses: actions/upload-artifact@v3
-  #      with:
-  #        name: enhanced-sources
-  #        path: build/enhanced-src.zip
+  make-enhanced-sources:
+    name: Make enhanced sources
+    needs: [make-vanilla-sources, preload-variables]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install icnsutils, moreutils
+        run: sudo apt-get install -y icnsutils moreutils
+      - name: Force to use HTTPS instead of SSH
+        run: git config --global url."https://github.com/".insteadOf "git@github.com:"
+      - name: Retrieve saved vanilla sources
+        uses: actions/download-artifact@v3
+        with:
+         name: vanilla-sources
+          path: build/vanilla-src.zip
+      - name: Unzip sources with 7z
+        working-directory: build
+        run: 7z x vanilla-src.zip
+      - name: Enhance extracted sources
+        env:
+          NOTION_ENHANCER_DESKTOP_COMMIT: ${{ needs.preload-variables.outputs.notion_enhancer_desktop_commit }}
+        run: scripts/enhance-src.sh
+      - name: Zip sources dir with 7z
+        working-directory: build
+        run: 7z a enhanced-src.zip enhanced-src
+      - name: Save enhanced sources as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: enhanced-sources
+          path: build/enhanced-src.zip
 
   build-app:
     name: Build app
-    needs: [make-vanilla-sources, preload-variables, create-release] #make-enhanced-sources,
+    needs: [make-vanilla-sources, make-enhanced-sources, preload-variables, create-release] 
     runs-on: ${{ matrix.os }}
     env:
       NOTION_VERSION: ${{ needs.preload-variables.outputs.notion_version }}
@@ -123,7 +123,7 @@ jobs:
     strategy:
       matrix:
         target: [windows, linux, macos]
-        edition: [vanilla] #, enhanced
+        edition: [vanilla, enhanced] 
         include:
           #- target: windows
           #  os: windows-latest
@@ -176,7 +176,7 @@ jobs:
     needs: [build-app]
     strategy:
       matrix:
-        edition: [vanilla] #, enhanced
+        edition: [vanilla, enhanced] 
     runs-on: ubuntu-latest
     steps:
       - uses: geekyeggo/delete-artifact@v2
