@@ -36,11 +36,7 @@ fi
 export NOTION_EXTRACTED_EXE_NAME="extracted-exe"
 export NOTION_EXTRACTED_APP_NAME="extracted-app"
 export NOTION_VANILLA_SRC_NAME="vanilla-src"
-export NOTION_ENHANCED_SRC_NAME="enhanced-src"
 
-export NOTION_ENHANCER_REPO_URL="https://github.com/notion-enhancer/desktop"
-export NOTION_ENHANCER_REPO_NAME="enhancer-desktop-src"
-
-export NOTION_REPACKAGED_HOMEPAGE="https://github.com/aokellermann/notion-repackaged"
+export NOTION_REPACKAGED_HOMEPAGE="https://github.com/sdkane/notion-repackaged"
 export NOTION_REPACKAGED_REPO=${NOTION_REPACKAGED_REPO:-${NOTION_REPACKAGED_HOMEPAGE}}
-export NOTION_REPACKAGED_AUTHOR="aokellermann"
+export NOTION_REPACKAGED_AUTHOR="sdkane"
