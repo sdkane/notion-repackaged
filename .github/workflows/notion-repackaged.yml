@@ -87,6 +87,7 @@ jobs:
     env:
       NOTION_VERSION: ${{ needs.preload-variables.outputs.notion_version }}
       NOTION_REPACKAGED_REVISION: ${{ needs.preload-variables.outputs.notion_repackaged_revision }}
+      SKIP_POSTINSTALL: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
