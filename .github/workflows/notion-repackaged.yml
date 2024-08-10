@@ -96,7 +96,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
          name: vanilla-sources
-          path: build/vanilla-src.zip
+         path: build/vanilla-src.zip
       - name: Unzip sources with 7z
         working-directory: build
         run: 7z x vanilla-src.zip
