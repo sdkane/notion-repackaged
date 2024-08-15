@@ -42,7 +42,7 @@ jobs:
     needs: [preload-variables]
     steps:
       - uses: actions/checkout@v4
-      - uses: release-drafter/release-drafter@v5
+      - uses: release-drafter/release-drafter@v6
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -58,7 +58,7 @@ jobs:
       NOTION_REPACKAGED_REVISION: ${{ needs.preload-variables.outputs.notion_repackaged_revision }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
       - name: Install moreutils
@@ -75,7 +75,7 @@ jobs:
         working-directory: build
         run: 7z a vanilla-src.zip vanilla-src
       - name: Save vanilla sources as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: vanilla-sources
           path: build/vanilla-src.zip
@@ -90,11 +90,11 @@ jobs:
       SKIP_POSTINSTALL: true
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
       - name: Retrieve saved sources
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: vanilla-sources
           path: sources.zip
@@ -128,6 +128,6 @@ jobs:
     needs: [build-app]
     runs-on: ubuntu-latest
     steps:
-      - uses: geekyeggo/delete-artifact@v2
+      - uses: geekyeggo/delete-artifact@v5
         with:
           name: 'vanilla-sources'
